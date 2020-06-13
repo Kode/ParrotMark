@@ -1,7 +1,6 @@
 package;
 
 import kha.Assets;
-import kha.Font;
 import kha.Framebuffer;
 import kha.Image;
 import kha.Scheduler;
@@ -12,8 +11,7 @@ class Main {
 	static final SCREEN_W: Int = 800;
 	static final SCREEN_H: Int = 600;
 
-	static var parrotTex: Image;
-	static var font: Font;
+	static var parrotTextures: Array<Image> = [];
 
 	static var bCount: Int = 0;
 	static var parrots: Array<Parrot>;
@@ -31,7 +29,7 @@ class Main {
 	static var fps: Int = 0;
 
 	static function mouseDown(button: Int, x: Int, y: Int): Void {
-		final count:Int = button == 0 ? 10000 : 1000;
+		final count: Int = button == 0 ? 10000 : 1000;
 		for (i in 0...count) {
 			final parrot = new Parrot();
 			parrot.speedX = Math.random() * 5;
@@ -88,11 +86,13 @@ class Main {
 
 		framebuffer.g2.begin(true, backgroundColor);
 		framebuffer.g2.color = 0xFFFFFFFF;
-		for (parrot in parrots){
-			framebuffer.g2.drawImage(parrotTex, parrot.x, parrot.y);
+		//for (parrot in parrots){
+		for (i in 0...parrots.length) {
+			final parrot = parrots[i];
+			framebuffer.g2.drawImage(parrotTextures[i % parrotTextures.length], parrot.x, parrot.y);
 		}
 
-		framebuffer.g2.font = font;
+		framebuffer.g2.font = Assets.fonts.mainfont;
 		framebuffer.g2.fontSize = 16;
 		framebuffer.g2.color = 0xFF000000;
 		framebuffer.g2.fillRect(0, 0, Main.SCREEN_W, 20);
@@ -103,21 +103,32 @@ class Main {
 		previousTime = currentTime;
 	}
 
+	static var parrotsToLoad = 100;
+
+	static function loadParrot(parrot: Image): Void {
+		parrotTextures.push(parrot);
+		--parrotsToLoad;
+
+		if (parrotsToLoad > 0) {
+			Assets.loadImage("small_parrot", loadParrot);
+		}
+		else {
+			parrots = new Array<Parrot>();
+			minX = 0;
+			maxX = Main.SCREEN_W - parrotTextures[0].width;
+			minY = 0;
+			maxY = Main.SCREEN_H - parrotTextures[0].height;
+
+			Mouse.get().notify(mouseDown, null, null, null);
+			Scheduler.addTimeTask(update, 0, 1 / 60);
+			System.notifyOnFrames(render);
+		}
+	}
+
 	public static function main(): Void {
 		System.start({title: "ParrotMark", width: SCREEN_W, height: SCREEN_H}, (_) -> {
-			Assets.loadEverything(() -> {
-				font = Assets.fonts.mainfont;
-				parrotTex = Assets.images.small_parrot;
-
-				parrots = new Array<Parrot>();
-				minX = 0;
-				maxX = Main.SCREEN_W - parrotTex.width;
-				minY = 0;
-				maxY = Main.SCREEN_H - parrotTex.height;
-
-				Mouse.get().notify(mouseDown, null, null, null);
-				Scheduler.addTimeTask(update, 0, 1 / 60);
-				System.notifyOnFrames(render);
+			Assets.fonts.mainfontLoad(() -> {
+				Assets.loadImage("small_parrot", loadParrot);
 			});
 		});
 	}
