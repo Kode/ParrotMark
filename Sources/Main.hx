@@ -29,7 +29,7 @@ class Main {
 	static var fps: Int = 0;
 
 	static function mouseDown(button: Int, x: Int, y: Int): Void {
-		final count: Int = button == 0 ? 10000 : 1000;
+		final count: Int = 100; // button == 0 ? 10000 : 1000;
 		for (i in 0...count) {
 			final parrot = new Parrot();
 			parrot.speedX = Math.random() * 5;
@@ -86,7 +86,7 @@ class Main {
 
 		framebuffer.g2.begin(true, backgroundColor);
 		framebuffer.g2.color = 0xFFFFFFFF;
-		//for (parrot in parrots){
+		
 		for (i in 0...parrots.length) {
 			final parrot = parrots[i];
 			framebuffer.g2.drawImage(parrotTextures[i % parrotTextures.length], parrot.x, parrot.y);
