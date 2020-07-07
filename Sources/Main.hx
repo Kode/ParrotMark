@@ -12,7 +12,8 @@ class Main {
 	public static function main(): Void {
 		System.start({title: "Parrot Mark", width: SCREEN_W, height: SCREEN_H}, (_) -> {
 			Assets.fonts.mainfontLoad(() -> {
-				bench = new multiparrots.MultiParrots();
+				bench = new parrots.Parrots();
+				//bench = new multiparrots.MultiParrots();
 			});
 		});
 	}
