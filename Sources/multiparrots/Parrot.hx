@@ -1,4 +1,4 @@
-package;
+package multiparrots;
 
 class Parrot {
 	public var x: Float = 0;
