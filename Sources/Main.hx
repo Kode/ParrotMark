@@ -126,7 +126,7 @@ class Main {
 	}
 
 	public static function main(): Void {
-		System.start({title: "ParrotMark", width: SCREEN_W, height: SCREEN_H}, (_) -> {
+		System.start({title: "Parrot Mark", width: SCREEN_W, height: SCREEN_H}, (_) -> {
 			Assets.fonts.mainfontLoad(() -> {
 				Assets.loadImage("small_parrot", loadParrot);
 			});
